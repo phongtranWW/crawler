@@ -1,0 +1,47 @@
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    container_name: mongodb_crawler
+    ports:
+      - ${MONGODB_PORT}:27017
+    volumes:
+      - mongodb_volume_data:/data/db 
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis_stack_crawler
+    ports:
+      - ${REDIS_PORT}:6379
+      - 8001:8001
+    volumes:
+      - redis_volume_data:/data
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio_crawler
+    environment:
+      - MINIO_ROOT_USER=${MINIO_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+    ports:
+      - ${MINIO_PORT}:9000
+      - "9001:9001"
+    volumes:
+      - minio_volume_data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    env_file:
+      - .env
+
+volumes:
+  redis_volume_data:
+  mongodb_volume_data:
+  minio_volume_data:
