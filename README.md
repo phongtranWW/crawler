@@ -3,7 +3,7 @@
 </p>
 <p align="center">A <a href="https://nestjs.com/" target="_blank">NestJS</a>-based crawler that downloads and minifies HTML content for storage, adhering to politeness policies.</p>
 
-## Technologies Used
+## Tech Stack
 
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)  
 An open platform for developing, shipping, and running applications, allowing you to manage containers with ease.
@@ -35,48 +35,33 @@ The crawler is designed using Event Driven Architecture (Meditator Topology).
 - **Html Placement**: HTML Placement is responsible for checking if the HTML has been viewed and for storing the HTML.
 - **URL Placement**: URL Placement is responsible for extracting URLs from HTML, filtering the URLs, checking if the URLs have been viewed, and storing the URLs in the database.
 
-## How the Crawler Works
+## How Crawler Works
 
 <div align="center">
-  <img src="./images/diagram.jpg" width="900" alt="Nest Logo" />
+  <img src="./images/diagram.png" width="900" alt="Nest Logo" />
 </div>
 
-1. **Initialization**:
+a. **Initialization**:
 
-   - Input the seed URLs you want to collect into the HTML Downloaders (there are 3 HTML Downloaders), with each HTML Downloader responsible for downloading URLs from the same host.
-   - After the download is complete, send the HTML back to the mediator.
+- (1) Input the seed URLs you want to collect into HTML Downloaders (there are 3 HTML Downloaders), with each HTML Downloader responsible for downloading URLs from the same host.
+- (2) After the download process is complete, send HTML back to Mediator.
 
-2. **Verifying Html**:
+b. **Storing And Extracting Url**:
 
-   - The mediator sends the downloaded HTML to the HTML Placement for checking if the HTML has been viewed before.
-   - If it has not been viewed, the HTML is sent back to the mediator.
+- (3) Mediator sends HTML to HTML Placement for storing and to URL Placement for extracting new URLs.
+- (4) New URLs are sent to Bloom Filter.
 
-3. **Storing And Extracting Url**:
+c. **Filtering Url**:
 
-   - The mediator sends the HTML to the HTML Placement for downloading and to the URL Placement for extracting new URLs.
-   - If new URLs are extracted, send those URLs to the mediator.
+- (5) Valid URLs are sent back to URL Placement.URL Placement send them back to Mediator
 
-4. **Filtering Url**:
+d. **Repeating**:
 
-   - The mediator sends the URLs to the URL Placement to filter the URLs that match the appropriate pattern.
-   - If there are valid URLs, the URL Placement sends those URLs back to the mediator.
-
-5. **Verifying Url**:
-
-   - The mediator sends the URLs to the URL Placement to check if the URLs have been viewed before.
-   - If not, the URLs are sent back to the mediator.
-
-6. **Storing Url**:
-   - The mediator checks if the total number of URLs in the HTML Downloader's queue plus the collected URLs exceeds the maximum limit.
-   - If not, all URLs are added to the HTML Downloader's queue.
-   - If so, they are stored in the database.
-7. **Repeating**:
-
-   - The process is repeated until the queue of the HTML Downloader is empty.
+- (6) Mediator send URLs back to HTML Downloader. The process is repeated until the queue of HTML Downloader is empty.
 
 ## Installation
 
-### Requirements
+### Requirement
 
 To run this project, ensure you have the following installed:
 
